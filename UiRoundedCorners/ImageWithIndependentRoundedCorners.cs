@@ -4,23 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Nobi.UiRoundedCorners {
-	[ExecuteInEditMode]                             //Required to do validation with OnEnable()
-	[DisallowMultipleComponent]                     //You can only have one of these in every object
-	[RequireComponent(typeof(RectTransform))]
+    [ExecuteInEditMode]								//Required to do validation with OnEnable()
+    [DisallowMultipleComponent]                     //You can only have one of these in every object
+    [RequireComponent(typeof(RectTransform))]
 	public class ImageWithIndependentRoundedCorners : MonoBehaviour {
 		private static readonly int prop_halfSize = Shader.PropertyToID("_halfSize");
 		private static readonly int prop_radiuses = Shader.PropertyToID("_r");
 		private static readonly int prop_rect2props = Shader.PropertyToID("_rect2props");
-		private static readonly int prop_OuterUV = Shader.PropertyToID("_OuterUV");
 
 		// Vector2.right rotated clockwise by 45 degrees
 		private static readonly Vector2 wNorm = new Vector2(.7071068f, -.7071068f);
 		// Vector2.right rotated counter-clockwise by 45 degrees
 		private static readonly Vector2 hNorm = new Vector2(.7071068f, .7071068f);
 
-		public Vector4 r = new Vector4(40f, 40f, 40f, 40f);
-		private Material material;
-		private Vector4 outerUV = new Vector4(0, 0, 1, 1);
+        public Vector4 r = new Vector4(40f, 40f, 40f, 40f);
+        private Material material;
 
 		// xy - position,
 		// zw - halfSize
@@ -33,15 +31,16 @@ namespace Nobi.UiRoundedCorners {
 		}
 
 		private void OnEnable() {
-			//You can only add either ImageWithRoundedCorners or ImageWithIndependentRoundedCorners
+            //You can only add either ImageWithRoundedCorners or ImageWithIndependentRoundedCorners
 			//It will replace the other component when added into the object.
-			var other = GetComponent<ImageWithRoundedCorners>();
-			if (other != null) {
-				r = Vector4.one * other.radius;     //When it does, transfer the radius value to this script
-				DestroyHelper.Destroy(other);
-			}
+            var other = GetComponent<ImageWithRoundedCorners>();
+            if (other != null)
+            {
+                r = Vector4.one * other.radius;		//When it does, transfer the radius value to this script
+                DestroyHelper.Destroy(other);
+            }
 
-			Validate();
+            Validate();
 			Refresh();
 		}
 
@@ -52,11 +51,9 @@ namespace Nobi.UiRoundedCorners {
 		}
 
 		private void OnDestroy() {
-			if (image != null) {
-				image.material = null;      //This makes so that when the component is removed, the UI material returns to null
-			}
+            image.material = null;      //This makes so that when the component is removed, the UI material returns to null
 
-			DestroyHelper.Destroy(material);
+            DestroyHelper.Destroy(material);
 			image = null;
 			material = null;
 		}
@@ -73,10 +70,6 @@ namespace Nobi.UiRoundedCorners {
 			if (image != null) {
 				image.material = material;
 			}
-
-			if (image is Image uiImage && uiImage.sprite != null) {
-				outerUV = UnityEngine.Sprites.DataUtility.GetOuterUV(uiImage.sprite);
-			}
 		}
 
 		public void Refresh() {
@@ -85,7 +78,6 @@ namespace Nobi.UiRoundedCorners {
 			material.SetVector(prop_rect2props, rect2props);
 			material.SetVector(prop_halfSize, rect.size * .5f);
 			material.SetVector(prop_radiuses, r);
-			material.SetVector(prop_OuterUV, outerUV);
 		}
 
 		private void RecalculateProps(Vector2 size) {
@@ -128,22 +120,24 @@ namespace Nobi.UiRoundedCorners {
 /// Display Vector4 as 4 separate fields for each corners.
 /// It's way easier to use than w,x,y,z in Vector4.
 /// </summary>
-#if UNITY_EDITOR
+#if UNITY_EDITOR 
 [CustomEditor(typeof(ImageWithIndependentRoundedCorners))]
-public class Vector4Editor : Editor {
-	public override void OnInspectorGUI() {
-		//DrawDefaultInspector();
+public class Vector4Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        //DrawDefaultInspector();
 
-		serializedObject.Update();
+        serializedObject.Update();
 
-		SerializedProperty vector4Prop = serializedObject.FindProperty("r");
+        SerializedProperty vector4Prop = serializedObject.FindProperty("r");
 
-		EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("x"), new GUIContent("Top Left Corner"));
-		EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("y"), new GUIContent("Top Right Corner"));
-		EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("w"), new GUIContent("Bottom Left Corner"));
-		EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("z"), new GUIContent("Bottom Right Corner"));
+        EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("x"), new GUIContent("Top Left Corner"));
+        EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("y"), new GUIContent("Top Right Corner"));
+        EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("w"), new GUIContent("Bottom Left Corner"));
+        EditorGUILayout.PropertyField(vector4Prop.FindPropertyRelative("z"), new GUIContent("Bottom Right Corner"));
 
-		serializedObject.ApplyModifiedProperties();
-	}
+        serializedObject.ApplyModifiedProperties();
+    }
 }
 #endif

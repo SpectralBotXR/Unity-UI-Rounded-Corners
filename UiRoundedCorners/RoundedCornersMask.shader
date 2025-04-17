@@ -1,15 +1,15 @@
-Shader "UI/RoundedCorners/RoundedCorners" {
+Shader "UI/RoundedCorners/RoundedCornersMask" {
     Properties {
         [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
 
         // --- Mask support ---
-        [HideInInspector] _StencilComp ("Stencil Comparison", Float) = 8
-        [HideInInspector] _Stencil ("Stencil ID", Float) = 0
-        [HideInInspector] _StencilOp ("Stencil Operation", Float) = 0
+        _StencilComp ("Stencil Comparison", Float) = 8
+        _Stencil ("Stencil ID", Float) = 1
+        _StencilOp ("Stencil Operation", Float) = 2
         [HideInInspector] _StencilWriteMask ("Stencil Write Mask", Float) = 255
         [HideInInspector] _StencilReadMask ("Stencil Read Mask", Float) = 255
-        [HideInInspector] _ColorMask ("Color Mask", Float) = 15
-        [HideInInspector] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
+        _ColorMask ("Color Mask", Float) = 0
+        _UseUIAlphaClip ("Use Alpha Clip", Float) = 1
         
         // Definition in Properties section is required to Mask works properly
         _WidthHeightRadius ("WidthHeightRadius", Vector) = (0,0,0,0)
